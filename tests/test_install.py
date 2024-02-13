@@ -278,6 +278,16 @@ class InstallTests(TestCase):
         assert len(calls) == 1
         assert calls[0]['argv'][1:5] == ['-m', 'pip', 'install', '-r']
 
+    def test_install_requires_no_module(self):
+        ins = Installer.from_ini_path(samples_dir / 'requires-requests-no-module.toml',
+                        user=False, python='mock_python', module_required=False)
+
+        with MockCommand('mock_python') as mockpy:
+            ins.install_requirements()
+        calls = mockpy.get_calls()
+        assert len(calls) == 1
+        assert calls[0]['argv'][1:5] == ['-m', 'pip', 'install', '-r']
+
     def test_install_reqs_my_python_if_needed_pep621(self):
         ins = Installer.from_ini_path(
             core_samples_dir / 'pep621_nodynamic' / 'pyproject.toml',

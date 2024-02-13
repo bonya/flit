@@ -91,7 +91,7 @@ class DependencyError(Exception):
 
 class Installer(object):
     def __init__(self, directory, ini_info, user=None, python=sys.executable,
-                 symlink=False, deps='all', extras=(), pth=False):
+                 symlink=False, deps='all', extras=(), pth=False, load_module=True):
         self.directory = directory
         self.ini_info = ini_info
         self.python = python
@@ -105,7 +105,10 @@ class Installer(object):
         if deps == 'none' and extras:
             raise DependencyError()
 
-        self.module = common.Module(self.ini_info.module, directory)
+        if load_module:
+            self.module = common.Module(self.ini_info.module, directory)
+        else:
+            self.module = None
 
         if (hasattr(os, 'getuid') and (os.getuid() == 0) and
                 (not os.environ.get('FLIT_ROOT_INSTALL'))):
@@ -121,10 +124,10 @@ class Installer(object):
 
     @classmethod
     def from_ini_path(cls, ini_path, user=None, python=sys.executable,
-                      symlink=False, deps='all', extras=(), pth=False):
+                      symlink=False, deps='all', extras=(), pth=False, load_module=True):
         ini_info = read_flit_config(ini_path)
         return cls(ini_path.parent, ini_info, user=user, python=python,
-                   symlink=symlink, deps=deps, extras=extras, pth=pth)
+                   symlink=symlink, deps=deps, extras=extras, pth=pth, load_module=load_module)
 
     def _run_python(self, code=None, file=None, extra_args=()):
         if code and file:

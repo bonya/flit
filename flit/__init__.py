@@ -220,7 +220,8 @@ def main(argv=None):
                 symlink=args.symlink,
                 deps=args.deps,
                 extras=args.extras,
-                pth=args.pth_file
+                pth=args.pth_file,
+                load_module=args.only_deps
             )
             if args.only_deps:
                 installer.install_requirements()
